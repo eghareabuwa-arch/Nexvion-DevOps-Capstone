@@ -25,6 +25,23 @@ pipeline {
             }
         }
 
+stage('Security Scan') {
+    steps {
+        sh '''
+            echo "Scanning Nexvion Docker image for vulnerabilities..."
+
+            docker run --rm \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              aquasec/trivy:latest image \
+              --timeout 10m \
+              --severity HIGH,CRITICAL \
+              --exit-code 0 \
+              nexvion:${BUILD_NUMBER}
+
+            echo "Trivy security scan completed."
+        '''
+    }
+}
         stage('Deploy') {
             steps {
                 sh '''
