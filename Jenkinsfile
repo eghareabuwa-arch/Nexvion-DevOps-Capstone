@@ -47,7 +47,7 @@ pipeline {
                     sleep 3
 
                     echo "Checking application..."
-                    curl -f http://localhost:8085/
+                    curl -f http://host.docker.internal:8085/
 
                     echo "Nexvion deployment is healthy."
                 '''
