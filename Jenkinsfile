@@ -42,6 +42,29 @@ stage('Security Scan') {
         '''
     }
 }
+
+stage('Push to Docker Hub') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerhub-credentials',
+            usernameVariable: 'DOCKERHUB_USER',
+            passwordVariable: 'DOCKERHUB_TOKEN'
+        )]) {
+            sh '''
+                echo "Tagging Nexvion image for Docker Hub..."
+                docker tag nexvion:${BUILD_NUMBER} ${DOCKERHUB_USER}/nexvion:${BUILD_NUMBER}
+
+                echo "Logging in to Docker Hub..."
+                echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+
+                echo "Pushing Nexvion image to Docker Hub..."
+                docker push ${DOCKERHUB_USER}/nexvion:${BUILD_NUMBER}
+
+                docker logout
+            '''
+        }
+    }
+}
         stage('Deploy') {
             steps {
                 sh '''
