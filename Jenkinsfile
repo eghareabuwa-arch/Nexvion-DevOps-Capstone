@@ -33,7 +33,7 @@ stage('Security Scan') {
             docker run --rm \
               -v /var/run/docker.sock:/var/run/docker.sock \
               aquasec/trivy:latest image \
-              --timeout 10m \
+              --timeout 60m \
               --severity HIGH,CRITICAL \
               --exit-code 0 \
               nexvion:${BUILD_NUMBER}
