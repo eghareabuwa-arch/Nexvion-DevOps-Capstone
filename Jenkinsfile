@@ -66,34 +66,41 @@ stage('Push to Docker Hub') {
     }
 }
         stage('Deploy') {
-            steps {
-                sh '''
-                    echo "Deploying Nexvion..."
+    steps {
+        sh '''
+            echo "Deploying Nexvion to Kubernetes..."
 
-                    docker rm -f nexvion-cicd || true
+            kubectl --kubeconfig=/tmp/jenkins-kubeconfig \
+              set image deployment/nexvion-deployment \
+              nexvion=abuwa4real/nexvion:${BUILD_NUMBER}
 
-                    docker run -d \
-                      --name nexvion-cicd \
-                      -p 8085:80 \
-                      nexvion:${BUILD_NUMBER}
-                '''
-            }
-        }
+            echo "Waiting for Kubernetes rollout..."
+            kubectl --kubeconfig=/tmp/jenkins-kubeconfig \
+              rollout status deployment/nexvion-deployment \
+              --timeout=120s
+
+            echo "Nexvion Kubernetes deployment completed."
+        '''
+    }
+}
 
         stage('Health Check') {
-            steps {
-                sh '''
-                    echo "Waiting for Nexvion to start..."
-                    sleep 3
+    steps {
+        sh '''
+            echo "Checking Nexvion Kubernetes deployment..."
 
-                    echo "Checking application..."
-                    curl -f http://host.docker.internal:8085/
+            kubectl --kubeconfig=/tmp/jenkins-kubeconfig \
+              get pods -l app=nexvion
 
-                    echo "Nexvion deployment is healthy."
-                '''
-            }
-        }
+            kubectl --kubeconfig=/tmp/jenkins-kubeconfig \
+              wait --for=condition=ready pod \
+              -l app=nexvion \
+              --timeout=120s
+
+            echo "All Nexvion Kubernetes pods are healthy and ready."
+        '''
     }
+}
 
     post {
         success {
