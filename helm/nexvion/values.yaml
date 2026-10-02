@@ -1,0 +1,25 @@
+replicaCount: 2
+
+image:
+  repository: abuwa4real/nexvion
+  tag: "8"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+config:
+  APP_NAME: "Nexvion"
+  APP_ENV: "production"
+
+secret:
+  APP_SECRET: "nexvion-demo-secret"
+
+ingress:
+  enabled: true
+  className: nginx
+  host: nexvion.local
+  path: /
+  pathType: Prefix
