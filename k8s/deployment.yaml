@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: nexvion-deployment
+  namespace: nexvion
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: nexvion
+
+  template:
+    metadata:
+      labels:
+        app: nexvion
+
+    spec:
+      containers:
+        - name: nexvion
+          image: abuwa4real/nexvion:8
+
+          envFrom:
+           - configMapRef:
+               name: nexvion-config
+           - secretRef:
+               name: nexvion-secret
+
+          ports:
+            - containerPort: 80
