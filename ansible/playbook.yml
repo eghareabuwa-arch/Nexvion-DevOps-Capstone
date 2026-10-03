@@ -1,0 +1,33 @@
+---
+- name: Configure Nexvion application environment
+  hosts: nexvion
+  gather_facts: true
+
+  tasks:
+    - name: Create Nexvion configuration directory
+      ansible.builtin.file:
+        path: /tmp/nexvion
+        state: directory
+        mode: '0755'
+
+    - name: Create Nexvion environment configuration
+      ansible.builtin.copy:
+        dest: /tmp/nexvion/environment.conf
+        mode: '0644'
+        content: |
+          APPLICATION=Nexvion
+          ENVIRONMENT=production
+          PLATFORM=Kubernetes
+          DEPLOYMENT=Helm
+          MONITORING=Prometheus-Grafana
+          MANAGED_BY=Ansible
+
+    - name: Verify Nexvion configuration
+      ansible.builtin.command:
+        cmd: cat /tmp/nexvion/environment.conf
+      register: nexvion_config
+      changed_when: false
+
+    - name: Display Nexvion configuration
+      ansible.builtin.debug:
+        var: nexvion_config.stdout_lines
