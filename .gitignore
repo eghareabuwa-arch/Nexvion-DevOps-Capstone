@@ -16,3 +16,9 @@ terraform/*.tfplan
 .DS_Store
 Thumbs.db
 .vscode/
+
+# AWS Terraform local files
+terraform/aws/.terraform/
+terraform/aws/*.tfstate
+terraform/aws/*.tfstate.*
+terraform/aws/*.tfplan
