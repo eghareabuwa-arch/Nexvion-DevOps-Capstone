@@ -620,6 +620,48 @@ curl "http://localhost:9200/_cat/indices?v"
 
 ---
 
+## AWS Cloud Deployment
+
+Nexvion is deployed to Amazon Web Services (AWS) using Infrastructure as Code with Terraform.
+
+The cloud deployment provisions:
+
+- Amazon EC2 running Amazon Linux 2023
+- Docker for application containerization
+- Nginx for serving the Nexvion frontend
+- AWS Security Group for HTTP and administrative SSH access
+- AWS Elastic IP for a stable public endpoint
+- Terraform for repeatable infrastructure provisioning
+
+### Live Application
+
+**[🚀 Open the Live Nexvion Application](http://16.192.138.63)**
+
+The application is publicly accessible through an AWS Elastic IP, providing a stable endpoint for project demonstration and assessment.
+
+### AWS Deployment Flow
+
+```text
+Nexvion Source Code
+        |
+        v
+    Dockerfile
+        |
+        v
+   Docker Image
+        |
+        v
+     AWS EC2
+        |
+        v
+ Docker + Nginx
+        |
+        v
+Nexvion Application
+        |
+        v
+Elastic IP: 16.192.138.63
+
 ## 18. Key Project Outcomes
 
 The Nexvion DevOps Capstone demonstrates:
